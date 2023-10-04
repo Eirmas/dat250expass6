@@ -1,12 +1,23 @@
-import { enableProdMode } from '@angular/core';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { provideHttpClient, withJsonpSupport } from '@angular/common/http';
+import { importProvidersFrom } from '@angular/core';
+import { MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
+import { MatDialogModule } from '@angular/material/dialog';
+import { bootstrapApplication } from '@angular/platform-browser';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideRouter, withRouterConfig } from '@angular/router';
+import { AppComponent } from './app/app.component';
+import { routes } from './app/app.routes';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
-import { AppModule } from './app/app.module';
-import { environment } from './environments/environment';
-
-if (environment.production) {
-  enableProdMode();
-}
-
-platformBrowserDynamic().bootstrapModule(AppModule)
-  .catch(err => console.error(err));
+bootstrapApplication(AppComponent, {
+  providers: [
+    { provide: MAT_DATE_LOCALE, useValue: 'no' },
+    provideAnimations(),
+    provideHttpClient(withJsonpSupport()),
+    provideRouter(
+      routes,
+      withRouterConfig({ paramsInheritanceStrategy: 'always' })
+    ),
+    importProvidersFrom(MatNativeDateModule, MatDialogModule, MatSnackBarModule),
+  ],
+}).catch((err) => console.error(err));
